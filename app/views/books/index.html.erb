@@ -31,7 +31,7 @@
               <td><%= link_to book.title, book_path(book.id) %></td>
               <td><%= book.body %></td>
             </tr>
-
+      <p><%= link_to "#{book.post_comments.count} コメント", book_path(book.id) %></p>
           <% end %>
         </tbody>
       </table>
