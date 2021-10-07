@@ -1,6 +1,14 @@
 class UsersController < ApplicationController
 
+  def follows
+  user = User.find(params[:id])
+  @users = user.following_user.page(params[:page]).per(3).reverse_order
+  end
 
+  def followers
+  user = User.find(params[:id])
+  @users = user.follower_user.page(params[:page]).per(3).reverse_order
+  end
 
   def new
     @book = Book.new
@@ -11,6 +19,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @book = Book.new
     @books = Book.where(user_id: @user.id)
+
   end
 
 
