@@ -1,14 +1,5 @@
 class UsersController < ApplicationController
 
-  def follows
-  user = User.find(params[:id])
-  @users = user.following_user.page(params[:page]).per(3).reverse_order
-  end
-
-  def followers
-  user = User.find(params[:id])
-  @users = user.follower_user.page(params[:page]).per(3).reverse_order
-  end
 
   def new
     @book = Book.new
@@ -57,6 +48,13 @@ class UsersController < ApplicationController
     private
   def user_params
     params.require(:user).permit(:name, :profile_image, :introduction)
+  end
+
+  def ensure_correct_user
+    @user = User.find(params[:id])
+    unless @user == current_user
+      redirect_to user_path(current_user)
+    end
   end
 
 end

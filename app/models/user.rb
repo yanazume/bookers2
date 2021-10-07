@@ -13,25 +13,28 @@ class User < ApplicationRecord
  has_many :favorites, dependent: :destroy
 
 
+ # 自分がフォローされる（被フォロー）側の関係性
   has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
-  has_many :followers, through: :reverse_of_relationships, source: :follower
-  # 被フォロー関係を通じて参照→followed_idをフォローしている人
-
+  # 自分がフォローする（与フォロー）側の関係性
   has_many :relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
-  # 【class_name: "Relationship"】は省略可能
+  # 被フォロー関係を通じて参照→自分をフォローしている人
+  has_many :followers, through: :reverse_of_relationships, source: :follower
+  # 与フォロー関係を通じて参照→自分がフォローしている人
   has_many :followings, through: :relationships, source: :followed
-  # 与フォロー関係を通じて参照→follower_idをフォローしている人
+
 
   def follow(user_id)
     relationships.create(followed_id: user_id)
   end
 
-  # ユーザーのフォローを外す
-  def unfollow(user_id)
-    follower.find_by(followed_id: user_id).destroy
+  def follow(user_id)
+    relationships.create(followed_id: user_id)
   end
 
-  # フォローしていればtrueを返す
+  def unfollow(user_id)
+    relationships.find_by(followed_id: user_id).destroy
+  end
+
   def following?(user)
     followings.include?(user)
   end
